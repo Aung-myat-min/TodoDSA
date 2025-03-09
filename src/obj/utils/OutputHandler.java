@@ -6,8 +6,8 @@ public class OutputHandler {
     private static final String GREEN = "\u001B[32m";
     private static final String YELLOW = "\u001B[33m";
 
-    // Print normal log in GREEN
-    public static void PrintNormalLog(String message) {
+    // Print Success log in GREEN
+    public static void PrintSuccessLog(String message) {
         System.out.println(GREEN + message + RESET);
     }
 

@@ -4,13 +4,11 @@ import obj.Todo;
 import obj.adt.ProgramMainADT;
 import obj.utils.CResponse;
 import obj.utils.InputHandler;
+import obj.utils.OutputHandler;
 
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class TodoMethods {
-    private static final Logger LOGGER = Logger.getLogger(TodoMethods.class.getName());
     private final ProgramMainADT data;
 
     public TodoMethods(ProgramMainADT data) {
@@ -24,7 +22,7 @@ public class TodoMethods {
 
     // Add a new Todo
     public void addTodo() {
-        LOGGER.info("Starting to add a new Todo...");
+        System.out.println("Starting to add a new Todo...");
 
         String title;
         String description;
@@ -37,8 +35,7 @@ public class TodoMethods {
             title = InputHandler.getString("Enter Todo Title: ");
             titleResponse = newTodo.setTitle(title);
             if (!titleResponse.status) {
-                LOGGER.warning("Invalid Title: " + titleResponse.message);
-                System.out.println("⚠ " + titleResponse.message);
+                OutputHandler.PrintWarningLog(titleResponse.message); // Warning for invalid title
             }
         } while (!titleResponse.status);
 
@@ -47,15 +44,18 @@ public class TodoMethods {
             description = InputHandler.getString("Enter Todo Description: ");
             descriptionResponse = newTodo.setDescription(description);
             if (!descriptionResponse.status) {
-                LOGGER.warning("Invalid Description: " + descriptionResponse.message);
-                System.out.println("⚠ " + descriptionResponse.message);
+                OutputHandler.PrintWarningLog(descriptionResponse.message); // Warning for invalid description
             }
         } while (!descriptionResponse.status);
 
-        // Add to data
-//        data.addTodo(newTodo);
-        LOGGER.info("✅ Todo added successfully with ID: " + uniqueId);
-        System.out.println("✅ Todo added successfully with ID: " + uniqueId);
+        // Add to ProgramMainADT
+        CResponse addResponse = data.addTodo(newTodo);
+
+        if (addResponse.status) {
+            OutputHandler.PrintSuccessLog(addResponse.message); // Success log
+        } else {
+            OutputHandler.PrintWarningLog(addResponse.message); // Failure log
+        }
     }
 
     public void updateTodo() {
