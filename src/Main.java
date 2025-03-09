@@ -1,5 +1,11 @@
+import obj.adt.ProgramMainADT;
+import obj.method.TodoMethods;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello, World!");
+        ProgramMainADT mainADT = new ProgramMainADT();
+        TodoMethods todoMethods = new TodoMethods(mainADT);
+
+        todoMethods.addTodo();
     }
 }
