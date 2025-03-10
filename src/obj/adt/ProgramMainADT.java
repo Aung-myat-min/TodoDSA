@@ -4,10 +4,7 @@ import obj.Todo;
 import obj.utils.CResponse;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 public class ProgramMainADT {
     LinkedHashMap<Date, LinkedList<Todo>> adt;
@@ -17,7 +14,13 @@ public class ProgramMainADT {
     }
 
     public CResponse addTodo(Todo t) {
-        Date today = new Date();
+        // Set the calendar to today's date
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Date today = calendar.getTime();  // Get the date with 0 hour, 0 min, 0 sec
 
         // If no list exists for today, create one
         adt.putIfAbsent(today, new LinkedList<>());
@@ -123,4 +126,26 @@ public class ProgramMainADT {
         }
     }
 
+    public void showTodoByDate(Date d) {
+        // Format the input date to match the date stored in the map (0 hour, 0 min, 0 sec)
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(d);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Date normalizedDate = calendar.getTime();  // Normalize the input date to 00:00:00
+
+        // Check if the Todos for this date exist
+        if (adt.containsKey(normalizedDate)) {
+            System.out.println("Displaying Todos for " + normalizedDate);
+
+            // Display each Todo in the list for that date
+            for (Todo todo : adt.get(normalizedDate)) {
+                todo.display();
+            }
+        } else {
+            System.out.println("No Todos found for the date: " + normalizedDate);
+        }
+    }
 }

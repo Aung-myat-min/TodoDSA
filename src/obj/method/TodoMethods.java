@@ -6,10 +6,14 @@ import obj.utils.CResponse;
 import obj.utils.InputHandler;
 import obj.utils.OutputHandler;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 public class TodoMethods {
     private final ProgramMainADT data;
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
     public TodoMethods(ProgramMainADT data) {
         this.data = data;
@@ -179,5 +183,28 @@ public class TodoMethods {
     }
 
     public void searchTodo() {
+        while (true) {
+            System.out.println("Searching for Todos by date...");
+
+            String dateInput = InputHandler.getString("Enter date (dd-MM-yyyy) or 'q' to quit: ");
+            if (dateInput.equalsIgnoreCase("q")) {
+                System.out.println("Search cancelled.");
+                return;
+            }
+
+            try {
+                Date searchDate = dateFormat.parse(dateInput);
+                data.showTodoByDate(searchDate);
+            } catch (ParseException e) {
+                OutputHandler.PrintWarningLog("Invalid date format! Please use dd-MM-yyyy.");
+                continue;
+            }
+
+            String continueSearch = InputHandler.getString("Do you want to search again? (yes/no): ");
+            if (!continueSearch.equalsIgnoreCase("yes")) {
+                System.out.println("Exiting search.");
+                break;
+            }
+        }
     }
 }
