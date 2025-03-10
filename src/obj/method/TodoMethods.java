@@ -9,7 +9,6 @@ import obj.utils.OutputHandler;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.UUID;
 
 public class TodoMethods {
     private final ProgramMainADT data;
@@ -26,45 +25,55 @@ public class TodoMethods {
     }
 
     // Add a new Todo
+    // Add a new Todo
     public void addTodo() {
-        System.out.println("Starting to add a new Todo...");
+        while (true) {
+            OutputHandler.printBorderMessage("Starting to add a new Todo...");
 
-        String title;
-        String description;
-        CResponse titleResponse, descriptionResponse;
-        String uniqueId = randomTodoId();
-        Todo newTodo = new Todo(uniqueId);
+            String title;
+            String description;
+            CResponse titleResponse, descriptionResponse;
+            String uniqueId = randomTodoId();
+            Todo newTodo = new Todo(uniqueId);
 
-        // Keep asking until a valid title is entered
-        do {
-            title = InputHandler.getString("Enter Todo Title: ");
-            titleResponse = newTodo.setTitle(title);
-            if (!titleResponse.status) {
-                OutputHandler.PrintWarningLog(titleResponse.message); // Invalid title
+            // Keep asking until a valid title is entered
+            do {
+                title = InputHandler.getString("Enter Todo Title: ");
+                titleResponse = newTodo.setTitle(title);
+                if (!titleResponse.status) {
+                    OutputHandler.PrintWarningLog(titleResponse.message); // Invalid title
+                }
+            } while (!titleResponse.status);
+
+            // Keep asking until a valid description is entered
+            do {
+                description = InputHandler.getString("Enter Todo Description: ");
+                descriptionResponse = newTodo.setDescription(description);
+                if (!descriptionResponse.status) {
+                    OutputHandler.PrintWarningLog(descriptionResponse.message); // Invalid description
+                }
+            } while (!descriptionResponse.status);
+
+            // Add to ProgramMainADT
+            CResponse addResponse = data.addTodo(newTodo);
+
+            if (addResponse.status) {
+                OutputHandler.PrintSuccessLog(addResponse.message); // Success
+            } else {
+                OutputHandler.PrintWarningLog(addResponse.message); // Failure
             }
-        } while (!titleResponse.status);
 
-        // Keep asking until a valid description is entered
-        do {
-            description = InputHandler.getString("Enter Todo Description: ");
-            descriptionResponse = newTodo.setDescription(description);
-            if (!descriptionResponse.status) {
-                OutputHandler.PrintWarningLog(descriptionResponse.message); // Invalid description
+            // Ask if the user wants to add another Todo
+            String continueAdding = InputHandler.getString("Do you want to add another Todo? (yes/no): ");
+            if (!continueAdding.equalsIgnoreCase("yes")) {
+                OutputHandler.PrintWarningLog("Stopping Todo addition.");
+                break;
             }
-        } while (!descriptionResponse.status);
-
-        // Add to ProgramMainADT
-        CResponse addResponse = data.addTodo(newTodo);
-
-        if (addResponse.status) {
-            OutputHandler.PrintSuccessLog(addResponse.message); // Success
-        } else {
-            OutputHandler.PrintWarningLog(addResponse.message); // Failure
         }
     }
 
     public void updateTodo() {
-        System.out.println("Updating a Todo...");
+        OutputHandler.printBorderMessage("Updating a Todo...");
 
         // Display all todos before updating
         data.displayTodos();
@@ -75,7 +84,7 @@ public class TodoMethods {
 
             // Exit if user inputs 'q'
             if (todoId.equalsIgnoreCase("q")) {
-                System.out.println("Update cancelled.");
+                OutputHandler.PrintWarningLog("Update cancelled.");
                 return;
             }
 
@@ -113,7 +122,7 @@ public class TodoMethods {
     }
 
     public void deleteTodo() {
-        System.out.println("Deleting a Todo...");
+        OutputHandler.printBorderMessage("Deleting a Todo...");
 
         // Display all todos before deleting
         data.displayTodos();
@@ -124,7 +133,7 @@ public class TodoMethods {
 
             // Exit if user inputs 'q'
             if (todoId.equalsIgnoreCase("q")) {
-                System.out.println("Deletion cancelled.");
+                OutputHandler.PrintWarningLog("Deletion cancelled.");
                 return;
             }
 
@@ -143,7 +152,7 @@ public class TodoMethods {
     }
 
     public void tweakTodo() {
-        System.out.println("Tweaking a Todo...");
+        OutputHandler.printBorderMessage("Tweaking a Todo...");
 
         // Display all todos before tweaking
         data.displayTodos();
@@ -154,7 +163,7 @@ public class TodoMethods {
 
             // Exit if user inputs 'q'
             if (todoId.equalsIgnoreCase("q")) {
-                System.out.println("Tweaking cancelled.");
+                OutputHandler.PrintWarningLog("Tweaking cancelled.");
                 return;
             }
 
@@ -185,11 +194,11 @@ public class TodoMethods {
 
     public void searchTodo() {
         while (true) {
-            System.out.println("Searching for Todos by date...");
+            OutputHandler.printBorderMessage("Searching for Todos by date...");
 
             String dateInput = InputHandler.getString("Enter date (dd-MM-yyyy) or 'q' to quit: ");
             if (dateInput.equalsIgnoreCase("q")) {
-                System.out.println("Search cancelled.");
+                OutputHandler.PrintWarningLog("Search cancelled.");
                 return;
             }
 
@@ -203,7 +212,7 @@ public class TodoMethods {
 
             String continueSearch = InputHandler.getString("Do you want to search again? (yes/no): ");
             if (!continueSearch.equalsIgnoreCase("yes")) {
-                System.out.println("Exiting search.");
+                OutputHandler.PrintWarningLog("Exiting search.");
                 break;
             }
         }
