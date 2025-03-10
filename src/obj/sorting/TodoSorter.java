@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 public class TodoSorter {
 
+    // Sort Todos using merge sort
     public static List<Todo> mergeSort(List<Todo> todos) {
         if (todos.size() <= 1) {
             return todos;
@@ -18,6 +19,7 @@ public class TodoSorter {
         return merge(mergeSort(left), mergeSort(right));
     }
 
+    // Merge two sorted lists of Todos
     private static List<Todo> merge(List<Todo> left, List<Todo> right) {
         List<Todo> sorted = new ArrayList<>();
         int i = 0, j = 0;
@@ -26,7 +28,7 @@ public class TodoSorter {
             Todo leftTodo = left.get(i);
             Todo rightTodo = right.get(j);
 
-            // 1. Sort by completion status (Uncompleted first)
+            // Sort by completion status (uncompleted first)
             if (!leftTodo.isDone() && rightTodo.isDone()) {
                 sorted.add(leftTodo);
                 i++;
@@ -34,7 +36,7 @@ public class TodoSorter {
                 sorted.add(rightTodo);
                 j++;
             }
-            // 2. If both have the same completion status, sort by title
+            // Sort by title if completion status is the same
             else if (leftTodo.getTitle().compareToIgnoreCase(rightTodo.getTitle()) <= 0) {
                 sorted.add(leftTodo);
                 i++;

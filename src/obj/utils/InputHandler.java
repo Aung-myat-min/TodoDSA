@@ -22,7 +22,7 @@ public class InputHandler {
 
                 // Check if number is within range
                 if (number < min || number > max) {
-                    throw new NumberOutOfRangeException("Number out of range! Please enter a number between 1 and 7.");
+                    throw new NumberOutOfRangeException(String.format("Number out of range! Please enter a number between %d and %d.", min, max));
                 }
 
                 return number;
@@ -40,6 +40,6 @@ public class InputHandler {
     }
 
     public static Scanner getScanner() {
-        return  scanner;
+        return scanner;
     }
 }

@@ -9,7 +9,7 @@ public class Todo {
     boolean done = false;
 
     public Todo(String uniqueId) {
-        this.uniqueId = uniqueId;
+        this.uniqueId = uniqueId;  // Constructor to set the unique ID
     }
 
     public String getUniqueId() {
@@ -18,7 +18,7 @@ public class Todo {
 
     public CResponse setTitle(String title) {
         if (title == null || title.trim().length() < 2) {
-            return new CResponse(false, "Title must be at least 2 characters long!");
+            return new CResponse(false, "Title must be at least 2 characters long!");  // Validation for the title
         }
         this.title = title;
         return new CResponse(true, "Title set successfully!");
@@ -26,17 +26,14 @@ public class Todo {
 
     public CResponse setDescription(String description) {
         if (description == null || description.trim().length() < 2) {
-            return new CResponse(false, "Description must be at least 2 characters long!");
+            return new CResponse(false, "Description must be at least 2 characters long!");  // Validation for the description
         }
         this.description = description;
         return new CResponse(true, "Description set successfully!");
     }
 
-    public void setDone(boolean done) {
-        this.done = done;
-    }
-
     public void display() {
+        // Display Todo details
         System.out.println("-----------------------------");
         System.out.println("Todo ID: " + uniqueId);
         System.out.println("Title: " + title);
@@ -49,11 +46,15 @@ public class Todo {
         return this.done;
     }
 
+    public void setDone(boolean done) {
+        this.done = done;
+    }
+
     public String getTitle() {
         return this.title;
     }
 
     public String getDescription() {
-        return  this.description;
+        return this.description;
     }
 }

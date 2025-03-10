@@ -3,6 +3,8 @@ package obj.adt;
 import obj.Todo;
 import obj.sorting.TodoSorter;
 import obj.utils.CResponse;
+import obj.utils.InputHandler;
+import obj.utils.OutputHandler;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -34,7 +36,7 @@ public class ProgramMainADT {
 
     public void displayTodos() {
         if (adt.isEmpty()) {
-            System.out.println("No Todos available.");
+            OutputHandler.PrintWarningLog("No Todos available.");
             return;
         }
 
@@ -43,11 +45,26 @@ public class ProgramMainADT {
 
         for (Map.Entry<Date, LinkedList<Todo>> entry : adt.entrySet()) {
             System.out.println("Date: " + dateFormat.format(entry.getKey()));
+
             for (Todo todo : entry.getValue()) {
+                // Display the Todo details
                 todo.display();
+
+                // Ask user to continue or quit
+                String userInput = InputHandler.getString("Press [space] to continue or [q] to quit: ").trim();
+
+                // Handle user input
+                if (userInput.equalsIgnoreCase("q")) {
+                    OutputHandler.PrintWarningLog("Exiting the todo display.");
+                    return; // Stop displaying todos
+                } else if (!userInput.isEmpty()) {
+                    // Handle invalid input
+                    OutputHandler.PrintWarningLog("Invalid input! Please press [space] to continue or [q] to quit.");
+                }
             }
         }
     }
+
 
     public Todo getTodoById(String todoId) {
         for (Date date : adt.keySet()) {
@@ -146,7 +163,7 @@ public class ProgramMainADT {
 
             // Print header
             System.out.println("\n=================================================================");
-            System.out.println("|  ID       | Completed | Title                        | Description");
+            System.out.println("| ID       | Completed | Title                        | Description");
             System.out.println("=================================================================");
 
             // Print each sorted Todo
