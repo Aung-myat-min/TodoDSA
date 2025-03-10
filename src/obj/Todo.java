@@ -35,4 +35,13 @@ public class Todo {
     public void setDone(boolean done) {
         this.done = done;
     }
+
+    public void display() {
+        System.out.println("-----------------------------");
+        System.out.println("Todo ID: " + uniqueId);
+        System.out.println("Title: " + title);
+        System.out.println("Description: " + description);
+        System.out.println("Status: " + (done ? "✅ Completed" : "⏳ Pending"));
+        System.out.println("-----------------------------");
+    }
 }
