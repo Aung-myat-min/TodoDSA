@@ -34,21 +34,27 @@ public class Main {
                 switch (choice) {
                     case 1:
                         todoMethods.addTodo();  // Calls method to add a new todo
+                        System.out.println();
                         break;
                     case 2:
                         todoMethods.updateTodo();  // Calls method to update an existing todo
+                        System.out.println();
                         break;
                     case 3:
                         todoMethods.deleteTodo();  // Calls method to delete a todo
+                        System.out.println();
                         break;
                     case 4:
                         todoMethods.tweakTodo();  // Calls method to mark a todo as complete/uncompleted
+                        System.out.println();
                         break;
                     case 5:
                         todoMethods.searchTodo();  // Calls method to search todos by date
+                        System.out.println();
                         break;
                     case 6:
                         mainADT.displayTodos();  // Calls method to display all todos
+                        System.out.println();
                         break;
                     case 7:
                         // Exit the program
