@@ -44,4 +44,12 @@ public class Todo {
         System.out.println("Status: " + (done ? "✅ Completed" : "⏳ Pending"));
         System.out.println("-----------------------------");
     }
+
+    public boolean isDone() {
+        return this.done;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
 }

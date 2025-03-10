@@ -13,10 +13,11 @@ import java.util.UUID;
 
 public class TodoMethods {
     private final ProgramMainADT data;
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+    private final SimpleDateFormat dateFormat;
 
     public TodoMethods(ProgramMainADT data) {
         this.data = data;
+        dateFormat = new SimpleDateFormat("dd-MM-yyyy");
     }
 
     // Generate a random unique ID
