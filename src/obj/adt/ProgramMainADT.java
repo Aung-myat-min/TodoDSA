@@ -103,5 +103,24 @@ public class ProgramMainADT {
         return new CResponse(false, "Todo with ID " + todoId + " not found!");
     }
 
+    public CResponse markTodoById(String todoId, boolean status) {
+        // Get the todo by ID
+        Todo todo = getTodoById(todoId);
+
+        if (todo == null) {
+            return new CResponse(false, "Todo with ID " + todoId + " not found!");
+        }
+
+        // Mark the todo as complete
+        todo.setDone(true);
+        CResponse markResponse = new CResponse(status, "");
+
+        if (markResponse.status) {
+            String statusMessage = status ? "completed!" : "uncompleted!";
+            return new CResponse(true, "Todo with ID " + todoId + " marked as" + statusMessage);
+        } else {
+            return markResponse;
+        }
+    }
 
 }

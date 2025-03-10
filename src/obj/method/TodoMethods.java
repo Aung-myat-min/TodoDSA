@@ -113,7 +113,7 @@ public class TodoMethods {
         // Display all todos before deleting
         data.displayTodos();
 
-        while (true) {
+        do {
             // Ask for the Todo ID
             String todoId = InputHandler.getString("Enter Todo ID to delete (or 'q' to quit): ");
 
@@ -134,10 +134,48 @@ public class TodoMethods {
             }
 
             return;
-        }
+        } while (true);
     }
 
-    public void doneTodo() {
+    public void tweakTodo() {
+        System.out.println("Tweaking a Todo...");
+
+        // Display all todos before tweaking
+        data.displayTodos();
+
+        while (true) {
+            // Ask for the Todo ID
+            String todoId = InputHandler.getString("Enter Todo ID to tweak (or 'q' to quit): ");
+
+            // Exit if user inputs 'q'
+            if (todoId.equalsIgnoreCase("q")) {
+                System.out.println("Tweaking cancelled.");
+                return;
+            }
+
+            // Find the Todo by ID
+            Todo todoToTweak = data.getTodoById(todoId);
+            if (todoToTweak == null) {
+                OutputHandler.PrintWarningLog("Todo ID not found! Please try again.");
+                continue;
+            }
+
+            // Ask if user wants to mark it as completed or uncompleted
+            String statusInput = InputHandler.getString("Do you want to mark this Todo as completed? (yes/no): ");
+            boolean status = statusInput.equalsIgnoreCase("yes");
+
+            // Call markTodoById method
+            CResponse markResponse = data.markTodoById(todoId, status);
+
+            // Output the result
+            if (markResponse.status) {
+                OutputHandler.PrintSuccessLog(markResponse.message);
+            } else {
+                OutputHandler.PrintWarningLog(markResponse.message);
+            }
+
+            return;
+        }
     }
 
     public void searchTodo() {
