@@ -1,6 +1,7 @@
 package obj.adt;
 
 import obj.Todo;
+import obj.sorting.TodoSorter;
 import obj.utils.CResponse;
 
 import java.text.SimpleDateFormat;
@@ -134,18 +135,34 @@ public class ProgramMainADT {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        Date normalizedDate = calendar.getTime();  // Normalize the input date to 00:00:00
+        Date normalizedDate = calendar.getTime();  // Normalize to 00:00:00
 
         // Check if the Todos for this date exist
         if (adt.containsKey(normalizedDate)) {
-            System.out.println("Displaying Todos for " + normalizedDate);
+            List<Todo> todos = adt.get(normalizedDate);
 
-            // Display each Todo in the list for that date
-            for (Todo todo : adt.get(normalizedDate)) {
-                todo.display();
+            // Sort the Todos
+            List<Todo> sortedTodos = TodoSorter.mergeSort(todos);
+
+            // Print header
+            System.out.println("\n=================================================================");
+            System.out.println("|  ID       | Completed | Title                        | Description");
+            System.out.println("=================================================================");
+
+            // Print each sorted Todo
+            for (Todo todo : sortedTodos) {
+                String id = todo.getUniqueId();
+                String completed = todo.isDone() ? "Yes" : "No ";
+                String title = todo.getTitle();
+                String description = todo.getDescription();
+
+                // Format output with fixed width
+                System.out.printf("| %-8s | %-9s | %-28s | %s%n", id, completed, title, description);
             }
+
+            System.out.println("=================================================================\n");
         } else {
-            System.out.println("No Todos found for the date: " + normalizedDate);
+            System.out.println("No Todos found for the date: " + new SimpleDateFormat("dd-MM-yyyy").format(normalizedDate));
         }
     }
 }
