@@ -9,9 +9,7 @@ import obj.utils.OutputHandler;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
+import java.util.*;
 
 public class TodoMethods {
     private final ProgramMainADT data;
@@ -316,6 +314,22 @@ public class TodoMethods {
     }
 
     public void sortTodosByDueDateAndSort() {
+        OutputHandler.printBorderMessage("Sorting Todos by Due Date and Status...");
+
+        // Get the sorted map from ProgramMainADT
+        LinkedHashMap<Date, LinkedList<Todo>> sortedTodos = data.sortTodosByDueDateAndStatus();
+
+        // Output the result
+        if (sortedTodos.isEmpty()) {
+            OutputHandler.PrintWarningLog("No Todos available to sort.");
+        } else {
+            OutputHandler.PrintSuccessLog("Todos sorted by Due Date and Status:");
+            for (Map.Entry<Date, LinkedList<Todo>> entry : sortedTodos.entrySet()) {
+                for (Todo todo : entry.getValue()) {
+                    todo.display();
+                }
+            }
+        }
     }
 
     private void searchTodoByPartialDate() {

@@ -1,59 +1,87 @@
 package obj.sorting;
 
 import obj.Todo;
+import obj.TodoStatus;
+
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Map;
 
 public class TodoSorter {
 
-    // Sort Todos using merge sort
-    public static List<Todo> mergeSort(List<Todo> todos) {
-        if (todos.size() <= 1) {
-            return todos;
+    // Sort Todos by due date and status using merge sort
+    public static LinkedHashMap<Date, LinkedList<Todo>> sortTodosByDueDateAndStatus(LinkedHashMap<Date, LinkedList<Todo>> todosMap) {
+        // Create a new LinkedHashMap to maintain the order of insertion
+        LinkedHashMap<Date, LinkedList<Todo>> sortedMap = new LinkedHashMap<>();
+
+        // Sort each list by status within the same due date using merge sort
+        for (Map.Entry<Date, LinkedList<Todo>> entry : todosMap.entrySet()) {
+            List<Todo> sortedList = mergeSort(entry.getValue(), Comparator.comparing(Todo::getStatus, new TodoStatusComparator()).thenComparing(Todo::getTitle));
+            sortedMap.put(entry.getKey(), new LinkedList<>(sortedList));
         }
 
-        int mid = todos.size() / 2;
-        List<Todo> left = new ArrayList<>(todos.subList(0, mid));
-        List<Todo> right = new ArrayList<>(todos.subList(mid, todos.size()));
-
-        return merge(mergeSort(left), mergeSort(right));
+        return sortedMap;
     }
 
-    // Merge two sorted lists of Todos
-    private static List<Todo> merge(List<Todo> left, List<Todo> right) {
-        List<Todo> sorted = new ArrayList<>();
-        int i = 0, j = 0;
+    // Merge sort implementation
+    private static List<Todo> mergeSort(List<Todo> list, Comparator<Todo> comparator) {
+        if (list.size() <= 1) {
+            return list;
+        }
 
-        while (i < left.size() && j < right.size()) {
-            Todo leftTodo = left.get(i);
-            Todo rightTodo = right.get(j);
+        int mid = list.size() / 2;
+        List<Todo> left = new ArrayList<>(list.subList(0, mid));
+        List<Todo> right = new ArrayList<>(list.subList(mid, list.size()));
 
-            // Sort by completion status (uncompleted first)
-            if (!leftTodo.isDone() && rightTodo.isDone()) {
-                sorted.add(leftTodo);
-                i++;
-            } else if (leftTodo.isDone() && !rightTodo.isDone()) {
-                sorted.add(rightTodo);
-                j++;
-            }
-            // Sort by title if completion status is the same
-            else if (leftTodo.getTitle().compareToIgnoreCase(rightTodo.getTitle()) <= 0) {
-                sorted.add(leftTodo);
-                i++;
+        return merge(mergeSort(left, comparator), mergeSort(right, comparator), comparator);
+    }
+
+    // Merge function for merge sort
+    private static List<Todo> merge(List<Todo> left, List<Todo> right, Comparator<Todo> comparator) {
+        List<Todo> merged = new ArrayList<>();
+        int leftIndex = 0, rightIndex = 0;
+
+        while (leftIndex < left.size() && rightIndex < right.size()) {
+            if (comparator.compare(left.get(leftIndex), right.get(rightIndex)) <= 0) {
+                merged.add(left.get(leftIndex++));
             } else {
-                sorted.add(rightTodo);
-                j++;
+                merged.add(right.get(rightIndex++));
             }
         }
 
-        // Add remaining elements
-        while (i < left.size()) {
-            sorted.add(left.get(i++));
-        }
-        while (j < right.size()) {
-            sorted.add(right.get(j++));
+        while (leftIndex < left.size()) {
+            merged.add(left.get(leftIndex++));
         }
 
-        return sorted;
+        while (rightIndex < right.size()) {
+            merged.add(right.get(rightIndex++));
+        }
+
+        return merged;
+    }
+
+    // Custom comparator for TodoStatus
+    private static class TodoStatusComparator implements Comparator<TodoStatus> {
+        @Override
+        public int compare(TodoStatus status1, TodoStatus status2) {
+            return Integer.compare(getStatusOrder(status1), getStatusOrder(status2));
+        }
+
+        private int getStatusOrder(TodoStatus status) {
+            switch (status) {
+                case Doing:
+                    return 1;
+                case Pending:
+                    return 2;
+                case Done:
+                    return 3;
+                default:
+                    throw new IllegalArgumentException("Unknown status: " + status);
+            }
+        }
     }
 }

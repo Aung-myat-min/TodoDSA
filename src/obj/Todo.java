@@ -71,8 +71,8 @@ public class Todo {
         }
     }
 
-    public String getDueDate() {
-        return dueDate != null ? dateFormat.format(dueDate) : "No due date set";
+    public Date getDueDate() {
+        return dueDate;
     }
 
     public boolean isOverdue() {

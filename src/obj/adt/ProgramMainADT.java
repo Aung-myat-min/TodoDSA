@@ -259,4 +259,7 @@ public class ProgramMainADT {
         }
     }
 
+    public LinkedHashMap<Date, LinkedList<Todo>> sortTodosByDueDateAndStatus() {
+        return TodoSorter.sortTodosByDueDateAndStatus(adt);
+    }
 }
