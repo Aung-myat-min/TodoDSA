@@ -84,7 +84,7 @@ public class TodoMethods {
 
         data.displayTodos();
 
-        if(data.getSize() > 0){
+        if (data.getSize() > 0) {
             while (true) {
                 String todoId = InputHandler.getString("Enter Todo ID to update (or 'q' to quit): ");
                 if (todoId.equalsIgnoreCase("q")) {
@@ -98,19 +98,49 @@ public class TodoMethods {
                     continue;
                 }
 
-                String newTitle = InputHandler.getString("Enter new Title (leave empty to keep current): ");
-                if (newTitle.trim().isEmpty()) newTitle = null;
+                // Title update (Keep asking until valid or skipped)
+                while (true) {
+                    String newTitle = InputHandler.getString("Enter new Title (leave empty to keep current): ");
+                    if (newTitle.trim().isEmpty()) break;
 
-                String newDescription = InputHandler.getString("Enter new Description (leave empty to keep current): ");
-                if (newDescription.trim().isEmpty()) newDescription = null;
-
-                CResponse updateResponse = data.updateTodoById(todoId, newTitle, newDescription);
-                if (updateResponse.status) {
-                    OutputHandler.PrintSuccessLog(updateResponse.message);
-                } else {
-                    OutputHandler.PrintWarningLog(updateResponse.message);
+                    CResponse titleResponse = todoToUpdate.setTitle(newTitle);
+                    if (titleResponse.status) {
+                        OutputHandler.PrintSuccessLog("Title updated successfully!");
+                        break;
+                    } else {
+                        OutputHandler.PrintWarningLog(titleResponse.message);
+                    }
                 }
 
+                // Description update (Keep asking until valid or skipped)
+                while (true) {
+                    String newDescription = InputHandler.getString("Enter new Description (leave empty to keep current): ");
+                    if (newDescription.trim().isEmpty()) break;
+
+                    CResponse descriptionResponse = todoToUpdate.setDescription(newDescription);
+                    if (descriptionResponse.status) {
+                        OutputHandler.PrintSuccessLog("Description updated successfully!");
+                        break;
+                    } else {
+                        OutputHandler.PrintWarningLog(descriptionResponse.message);
+                    }
+                }
+
+                // Due date update (Keep asking until valid or skipped)
+                while (true) {
+                    String newDueDate = InputHandler.getString("Enter new Due Date (DD-MM-YYYY) (leave empty to keep current): ");
+                    if (newDueDate.trim().isEmpty()) break;
+
+                    CResponse dueDateResponse = todoToUpdate.setDueDate(newDueDate);
+                    if (dueDateResponse.status) {
+                        OutputHandler.PrintSuccessLog("Due Date updated successfully!");
+                        break;
+                    } else {
+                        OutputHandler.PrintWarningLog(dueDateResponse.message);
+                    }
+                }
+
+                OutputHandler.PrintSuccessLog("Todo updated successfully!");
                 return;
             }
         }
