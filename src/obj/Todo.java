@@ -38,8 +38,6 @@ public class Todo {
         return new CResponse(true, "Description set successfully!");
     }
 
-
-
     public String getTitle() {
         return this.title;
     }

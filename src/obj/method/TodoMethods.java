@@ -9,6 +9,7 @@ import obj.utils.OutputHandler;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class TodoMethods {
@@ -295,6 +296,44 @@ public class TodoMethods {
             }
         } else {
             OutputHandler.PrintWarningLog("Add at least 2 Todos to search!");
+        }
+    }
+
+    private void searchTodoByPartialDate() {
+        OutputHandler.printBorderMessage("Searching for Todos by partial date...");
+
+        while (true) {
+            String partialDate = InputHandler.getString("Enter partial date (e.g., MM-yyyy or yyyy) or 'q' to quit: ");
+            if (partialDate.equalsIgnoreCase("q")) {
+                OutputHandler.PrintWarningLog("Search cancelled.");
+                return;
+            }
+
+            Date searchDate;
+            try {
+                searchDate = new SimpleDateFormat("MM-yyyy").parse(partialDate);
+            } catch (ParseException e) {
+                OutputHandler.PrintWarningLog("Invalid date format! Please use MM-yyyy.");
+                continue;
+            }
+
+            ArrayList<Todo> matchedTodos = data.searchByPartialDate(searchDate);
+
+
+            if (matchedTodos.isEmpty()) {
+                OutputHandler.PrintWarningLog("No Todos found with the given partial date.");
+            } else {
+                OutputHandler.PrintSuccessLog("Todos found with the given partial date:");
+                for (Todo todo : matchedTodos) {
+                    System.out.println(todo);
+                }
+            }
+
+            String continueSearch = InputHandler.getString("Do you want to search again? (yes): ");
+            if (!continueSearch.equalsIgnoreCase("yes")) {
+                OutputHandler.PrintWarningLog("Exiting search.");
+                break;
+            }
         }
     }
 }

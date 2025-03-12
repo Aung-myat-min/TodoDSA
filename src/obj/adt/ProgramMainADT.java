@@ -188,6 +188,37 @@ public class ProgramMainADT {
         }
     }
 
+    public ArrayList<Todo> searchByPartialDate(Date date) {
+        ArrayList<Todo> result = new ArrayList<>();
+        Calendar inputCal = Calendar.getInstance();
+        inputCal.setTime(date);
+
+        for (Date key : adt.keySet()) {
+            Calendar keyCal = Calendar.getInstance();
+            keyCal.setTime(key);
+
+            if (keyCal.get(Calendar.YEAR) == inputCal.get(Calendar.YEAR) &&
+                    keyCal.get(Calendar.MONTH) == inputCal.get(Calendar.MONTH)) {
+                result.addAll(adt.get(key));
+            }
+        }
+        return result;
+    }
+
+    public ArrayList<Todo> searchTodoByTitle(String title) {
+        ArrayList<Todo> result = new ArrayList<>();
+
+        for (LinkedList<Todo> todoList : adt.values()) {
+            for (Todo todo : todoList) {
+                if (todo.getTitle().toLowerCase().contains(title.toLowerCase())) {
+                    result.add(todo);
+                }
+            }
+        }
+
+        return result;
+    }
+
     public void searchTodo() {
     }
 }
