@@ -42,34 +42,57 @@ public class ProgramMainADT {
     public void displayTodos() {
         if (adt.isEmpty()) {
             OutputHandler.PrintWarningLog("No Todos available.");
-            return;
+            System.exit(0); // Stop the program
         }
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        System.out.println("Displaying all Todos:");
+
+        for (Map.Entry<Date, LinkedList<Todo>> entry : adt.entrySet()) {
+            System.out.println("Date: " + dateFormat.format(entry.getKey()));
+
+            Iterator<Todo> iterator = entry.getValue().iterator();
+            while (iterator.hasNext()) {
+                // Display the first Todo
+                Todo todo1 = iterator.next();
+                todo1.display();
+
+                // Display the second Todo if available
+                if (iterator.hasNext()) {
+                    Todo todo2 = iterator.next();
+                    todo2.display();
+                }
+
+                // Ask user to continue or quit
+                System.out.println("Press enter to continue or [q] to quit.");
+                String userInput = InputHandler.getString(": ");
+
+                // Handle user input
+                if (userInput.trim().equalsIgnoreCase("q")) {
+                    OutputHandler.PrintWarningLog("Exiting the todo display.");
+                    System.exit(0); // Stop the program
+                }
+            }
+        }
+    }
+
+    public void showAllTodos() {
+        if (adt.isEmpty()) {
+            OutputHandler.PrintWarningLog("No Todos available.");
+            System.exit(0); // Stop the program
+        }
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         System.out.println("Displaying all Todos:");
 
         for (Map.Entry<Date, LinkedList<Todo>> entry : adt.entrySet()) {
             System.out.println("Date: " + dateFormat.format(entry.getKey()));
 
             for (Todo todo : entry.getValue()) {
-                // Display the Todo details
                 todo.display();
-
-                // Ask user to continue or quit
-                String userInput = InputHandler.getString("Press [space] to continue or [q] to quit: ").trim();
-
-                // Handle user input
-                if (userInput.equalsIgnoreCase("q")) {
-                    OutputHandler.PrintWarningLog("Exiting the todo display.");
-                    return; // Stop displaying todos
-                } else if (!userInput.isEmpty()) {
-                    // Handle invalid input
-                    OutputHandler.PrintWarningLog("Invalid input! Please press [space] to continue or [q] to quit.");
-                }
             }
         }
     }
-
 
     public Todo getTodoById(String todoId) {
         for (Date date : adt.keySet()) {
@@ -219,6 +242,21 @@ public class ProgramMainADT {
         return result;
     }
 
-    public void searchTodo() {
+    public LinkedList<Todo> getTodayTodo() {
+        // Set the calendar to today's date
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Date today = calendar.getTime();  // Get the date with 0 hour, 0 min, 0 sec
+
+        // Return the list of todos for today if it exists
+        if (adt.containsKey(today)) {
+            return adt.get(today);
+        } else {
+            return new LinkedList<>();
+        }
     }
+
 }

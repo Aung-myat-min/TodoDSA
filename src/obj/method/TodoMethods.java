@@ -312,6 +312,7 @@ public class TodoMethods {
     }
 
     public void showAllTodos() {
+        data.showAllTodos();
     }
 
     public void sortTodosByDueDateAndSort() {
