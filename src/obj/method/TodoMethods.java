@@ -336,4 +336,33 @@ public class TodoMethods {
             }
         }
     }
+
+    private void searchTodoByTitle() {
+        OutputHandler.printBorderMessage("Searching for Todos by title...");
+
+        while (true) {
+            String title = InputHandler.getString("Enter title to search (or 'q' to quit): ");
+            if (title.equalsIgnoreCase("q")) {
+                OutputHandler.PrintWarningLog("Search cancelled.");
+                return;
+            }
+
+            ArrayList<Todo> matchedTodos = data.searchTodoByTitle(title);
+
+            if (matchedTodos.isEmpty()) {
+                OutputHandler.PrintWarningLog("No Todos found with the given title.");
+            } else {
+                OutputHandler.PrintSuccessLog("Todos found with the given title:");
+                for (Todo todo : matchedTodos) {
+                    System.out.println(todo);
+                }
+            }
+
+            String continueSearch = InputHandler.getString("Do you want to search again? (yes): ");
+            if (!continueSearch.equalsIgnoreCase("yes")) {
+                OutputHandler.PrintWarningLog("Exiting search.");
+                break;
+            }
+        }
+    }
 }
