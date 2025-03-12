@@ -1,6 +1,7 @@
 package obj.adt;
 
 import obj.Todo;
+import obj.TodoStatus;
 import obj.sorting.TodoSorter;
 import obj.utils.CResponse;
 import obj.utils.InputHandler;
@@ -128,7 +129,7 @@ public class ProgramMainADT {
         return new CResponse(false, "Todo with ID " + todoId + " not found!");
     }
 
-    public CResponse markTodoById(String todoId, boolean status) {
+    public CResponse markTodoById(String todoId, TodoStatus status) {
         // Get the todo by ID
         Todo todo = getTodoById(todoId);
 
@@ -185,5 +186,8 @@ public class ProgramMainADT {
         } else {
             System.out.println("No Todos found for the date: " + new SimpleDateFormat("dd-MM-yyyy").format(normalizedDate));
         }
+    }
+
+    public void searchTodo() {
     }
 }

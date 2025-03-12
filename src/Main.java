@@ -45,7 +45,7 @@ public class Main {
                         System.out.println();
                         break;
                     case 4:
-                        todoMethods.tweakTodo();  // Calls method to mark a todo as complete/uncompleted
+                        todoMethods.updateTodoStatus();  // Calls method to mark a todo as complete/uncompleted
                         System.out.println();
                         break;
                     case 5:

@@ -1,6 +1,7 @@
 package obj.method;
 
 import obj.Todo;
+import obj.TodoStatus;
 import obj.adt.ProgramMainADT;
 import obj.utils.CResponse;
 import obj.utils.InputHandler;
@@ -152,13 +153,27 @@ public class TodoMethods {
         // Display all todos before deleting
         data.displayTodos();
 
-        if(data.getSize() > 0){
-            do {
+        if (data.getSize() > 0) {
+            while (true) {
                 // Ask for the Todo ID
                 String todoId = InputHandler.getString("Enter Todo ID to delete (or 'q' to quit): ");
 
                 // Exit if user inputs 'q'
                 if (todoId.equalsIgnoreCase("q")) {
+                    OutputHandler.PrintWarningLog("Deletion cancelled.");
+                    return;
+                }
+
+                // Check if the ID exists
+                Todo todoToDelete = data.getTodoById(todoId);
+                if (todoToDelete == null) {
+                    OutputHandler.PrintWarningLog("Todo ID not found! Please try again.");
+                    continue;
+                }
+
+                // Confirm deletion
+                String confirm = InputHandler.getString("Are you sure you want to delete this Todo? (yes): ");
+                if (!confirm.equalsIgnoreCase("yes")) {
                     OutputHandler.PrintWarningLog("Deletion cancelled.");
                     return;
                 }
@@ -174,56 +189,83 @@ public class TodoMethods {
                 }
 
                 return;
-            } while (true);
+            }
         }
     }
 
-    public void tweakTodo() {
-        OutputHandler.printBorderMessage("Tweaking a Todo...");
+    public void updateTodoStatus() {
+        OutputHandler.printBorderMessage("Updating Todo Status...");
 
-        // Display all todos before tweaking
-        data.displayTodos();
+        while (true) {
+            // Ask for the Todo ID or allow search
+            String todoId = InputHandler.getString("Enter Todo ID to update status (or type 'search' to find one, 'q' to quit): ");
 
-        if(data.getSize() > 0){
-            while (true) {
-                // Ask for the Todo ID
-                String todoId = InputHandler.getString("Enter Todo ID to tweak (or 'q' to quit): ");
-
-                // Exit if user inputs 'q'
-                if (todoId.equalsIgnoreCase("q")) {
-                    OutputHandler.PrintWarningLog("Tweaking cancelled.");
-                    return;
-                }
-
-                // Find the Todo by ID
-                Todo todoToTweak = data.getTodoById(todoId);
-                if (todoToTweak == null) {
-                    OutputHandler.PrintWarningLog("Todo ID not found! Please try again.");
-                    continue;
-                }
-
-                // Ask if user wants to mark it as completed or uncompleted
-                String statusInput = InputHandler.getString("Do you want to mark this Todo as completed? (yes/no): ");
-                boolean status = statusInput.equalsIgnoreCase("yes");
-
-                // Call markTodoById method
-                CResponse markResponse = data.markTodoById(todoId, status);
-
-                // Output the result
-                if (markResponse.status) {
-                    OutputHandler.PrintSuccessLog(markResponse.message);
-                } else {
-                    OutputHandler.PrintWarningLog(markResponse.message);
-                }
-
+            // Handle user exit
+            if (todoId.equalsIgnoreCase("q")) {
+                OutputHandler.PrintWarningLog("Update cancelled.");
                 return;
             }
+
+            // Allow user to search for a Todo
+            if (todoId.equalsIgnoreCase("search")) {
+                data.searchTodo();  // Assuming you already have this method
+                continue; // Restart loop to ask for ID again
+            }
+
+            // Find the Todo by ID
+            Todo todoToUpdate = data.getTodoById(todoId);
+            if (todoToUpdate == null) {
+                OutputHandler.PrintWarningLog("Todo ID not found! Please try again.");
+                continue;
+            }
+
+            // Show current status
+            System.out.println("Current Status: " + todoToUpdate.getStatus());
+
+            // Display status options
+            System.out.println("Select the new status:");
+            for (TodoStatus status : TodoStatus.values()) {
+                System.out.println(status.ordinal() + 1 + ". " + status);
+            }
+
+            TodoStatus newStatus = null;
+            while (newStatus == null) {
+                try {
+                    int option = Integer.parseInt(InputHandler.getString("Enter your choice (1-3): "));
+                    if (option >= 1 && option <= TodoStatus.values().length) {
+                        newStatus = TodoStatus.values()[option - 1];
+                    } else {
+                        OutputHandler.PrintWarningLog("Invalid option! Please enter a number between 1 and " + TodoStatus.values().length + ".");
+                    }
+                } catch (NumberFormatException e) {
+                    OutputHandler.PrintWarningLog("Invalid input! Please enter a valid number.");
+                }
+            }
+
+            // Confirm before updating
+            String confirm = InputHandler.getString("Are you sure you want to change status to " + newStatus + "? (yes/no): ");
+            if (!confirm.equalsIgnoreCase("yes")) {
+                OutputHandler.PrintWarningLog("Status update cancelled.");
+                return;
+            }
+
+            // Call method to update status
+            CResponse updateResponse = data.markTodoById(todoId, newStatus);
+
+            // Output the result
+            if (updateResponse.status) {
+                OutputHandler.PrintSuccessLog(updateResponse.message);
+            } else {
+                OutputHandler.PrintWarningLog(updateResponse.message);
+            }
+
+            return; // Exit function after successfully updating the status
         }
     }
 
     public void searchTodo() {
         System.out.println(data.getSize());
-        if(data.getSize() > 2){
+        if (data.getSize() > 2) {
             while (true) {
                 OutputHandler.printBorderMessage("Searching for Todos by date...");
 
@@ -251,7 +293,7 @@ public class TodoMethods {
                     break;
                 }
             }
-        }else{
+        } else {
             OutputHandler.PrintWarningLog("Add at least 2 Todos to search!");
         }
     }
