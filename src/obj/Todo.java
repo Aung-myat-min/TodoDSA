@@ -2,14 +2,19 @@ package obj;
 
 import obj.utils.CResponse;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Todo {
     private final String uniqueId;
-    String title;
-    String description;
-    boolean done = false;
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+    private String title;
+    private String description;
+    private TodoStatus status = TodoStatus.Pending;
+    private Date dueDate;
 
     public Todo(String uniqueId) {
-        this.uniqueId = uniqueId;  // Constructor to set the unique ID
+        this.uniqueId = uniqueId;
     }
 
     public String getUniqueId() {
@@ -18,7 +23,7 @@ public class Todo {
 
     public CResponse setTitle(String title) {
         if (title == null || title.trim().length() < 2) {
-            return new CResponse(false, "Title must be at least 2 characters long!");  // Validation for the title
+            return new CResponse(false, "Title must be at least 2 characters long!");
         }
         this.title = title;
         return new CResponse(true, "Title set successfully!");
@@ -26,28 +31,10 @@ public class Todo {
 
     public CResponse setDescription(String description) {
         if (description == null || description.trim().length() < 2) {
-            return new CResponse(false, "Description must be at least 2 characters long!");  // Validation for the description
+            return new CResponse(false, "Description must be at least 2 characters long!");
         }
         this.description = description;
         return new CResponse(true, "Description set successfully!");
-    }
-
-    public void display() {
-        // Display Todo details
-        System.out.println("-----------------------------");
-        System.out.println("Todo ID: " + uniqueId);
-        System.out.println("Title: " + title);
-        System.out.println("Description: " + description);
-        System.out.println("Status: " + (done ? "✅ Completed" : "⏳ Pending"));
-        System.out.println("-----------------------------");
-    }
-
-    public boolean isDone() {
-        return this.done;
-    }
-
-    public void setDone(boolean done) {
-        this.done = done;
     }
 
     public String getTitle() {
@@ -56,5 +43,44 @@ public class Todo {
 
     public String getDescription() {
         return this.description;
+    }
+
+    public TodoStatus getStatus() {
+        return this.status;
+    }
+
+    public void setStatus(TodoStatus status) {
+        this.status = status;
+    }
+
+    public CResponse setDueDate(String dateStr) {
+        try {
+            this.dueDate = dateFormat.parse(dateStr);
+            return new CResponse(true, "Due date set successfully!");
+        } catch (Exception e) {
+            return new CResponse(false, "Invalid date format! Use dd-MM-yyyy.");
+        }
+    }
+
+    public String getDueDate() {
+        return dueDate != null ? dateFormat.format(dueDate) : "No due date set";
+    }
+
+    public boolean isOverdue() {
+        if (dueDate == null) return false;
+        return new Date().after(dueDate);
+    }
+
+    public void display() {
+        System.out.println("-----------------------------");
+        System.out.println("Todo ID: " + uniqueId);
+        System.out.println("Title: " + title);
+        System.out.println("Description: " + description);
+        System.out.println("Status: " + status);
+        System.out.println("Due Date: " + getDueDate());
+        if (isOverdue()) {
+            System.out.println("⚠️ Overdue!");
+        }
+        System.out.println("-----------------------------");
     }
 }

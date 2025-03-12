@@ -76,33 +76,35 @@ public class TodoMethods {
 
         data.displayTodos();
 
-        while (true) {
-            String todoId = InputHandler.getString("Enter Todo ID to update (or 'q' to quit): ");
-            if (todoId.equalsIgnoreCase("q")) {
-                OutputHandler.PrintWarningLog("Update cancelled.");
+        if(data.getSize() > 0){
+            while (true) {
+                String todoId = InputHandler.getString("Enter Todo ID to update (or 'q' to quit): ");
+                if (todoId.equalsIgnoreCase("q")) {
+                    OutputHandler.PrintWarningLog("Update cancelled.");
+                    return;
+                }
+
+                Todo todoToUpdate = data.getTodoById(todoId);
+                if (todoToUpdate == null) {
+                    OutputHandler.PrintWarningLog("Todo ID not found! Please try again.");
+                    continue;
+                }
+
+                String newTitle = InputHandler.getString("Enter new Title (leave empty to keep current): ");
+                if (newTitle.trim().isEmpty()) newTitle = null;
+
+                String newDescription = InputHandler.getString("Enter new Description (leave empty to keep current): ");
+                if (newDescription.trim().isEmpty()) newDescription = null;
+
+                CResponse updateResponse = data.updateTodoById(todoId, newTitle, newDescription);
+                if (updateResponse.status) {
+                    OutputHandler.PrintSuccessLog(updateResponse.message);
+                } else {
+                    OutputHandler.PrintWarningLog(updateResponse.message);
+                }
+
                 return;
             }
-
-            Todo todoToUpdate = data.getTodoById(todoId);
-            if (todoToUpdate == null) {
-                OutputHandler.PrintWarningLog("Todo ID not found! Please try again.");
-                continue;
-            }
-
-            String newTitle = InputHandler.getString("Enter new Title (leave empty to keep current): ");
-            if (newTitle.trim().isEmpty()) newTitle = null;
-
-            String newDescription = InputHandler.getString("Enter new Description (leave empty to keep current): ");
-            if (newDescription.trim().isEmpty()) newDescription = null;
-
-            CResponse updateResponse = data.updateTodoById(todoId, newTitle, newDescription);
-            if (updateResponse.status) {
-                OutputHandler.PrintSuccessLog(updateResponse.message);
-            } else {
-                OutputHandler.PrintWarningLog(updateResponse.message);
-            }
-
-            return;
         }
     }
 
@@ -112,28 +114,30 @@ public class TodoMethods {
         // Display all todos before deleting
         data.displayTodos();
 
-        do {
-            // Ask for the Todo ID
-            String todoId = InputHandler.getString("Enter Todo ID to delete (or 'q' to quit): ");
+        if(data.getSize() > 0){
+            do {
+                // Ask for the Todo ID
+                String todoId = InputHandler.getString("Enter Todo ID to delete (or 'q' to quit): ");
 
-            // Exit if user inputs 'q'
-            if (todoId.equalsIgnoreCase("q")) {
-                OutputHandler.PrintWarningLog("Deletion cancelled.");
+                // Exit if user inputs 'q'
+                if (todoId.equalsIgnoreCase("q")) {
+                    OutputHandler.PrintWarningLog("Deletion cancelled.");
+                    return;
+                }
+
+                // Call deleteTodoById method
+                CResponse deleteResponse = data.deleteTodoById(todoId);
+
+                // Output the result
+                if (deleteResponse.status) {
+                    OutputHandler.PrintSuccessLog(deleteResponse.message);
+                } else {
+                    OutputHandler.PrintWarningLog(deleteResponse.message);
+                }
+
                 return;
-            }
-
-            // Call deleteTodoById method
-            CResponse deleteResponse = data.deleteTodoById(todoId);
-
-            // Output the result
-            if (deleteResponse.status) {
-                OutputHandler.PrintSuccessLog(deleteResponse.message);
-            } else {
-                OutputHandler.PrintWarningLog(deleteResponse.message);
-            }
-
-            return;
-        } while (true);
+            } while (true);
+        }
     }
 
     public void tweakTodo() {
@@ -142,68 +146,75 @@ public class TodoMethods {
         // Display all todos before tweaking
         data.displayTodos();
 
-        while (true) {
-            // Ask for the Todo ID
-            String todoId = InputHandler.getString("Enter Todo ID to tweak (or 'q' to quit): ");
+        if(data.getSize() > 0){
+            while (true) {
+                // Ask for the Todo ID
+                String todoId = InputHandler.getString("Enter Todo ID to tweak (or 'q' to quit): ");
 
-            // Exit if user inputs 'q'
-            if (todoId.equalsIgnoreCase("q")) {
-                OutputHandler.PrintWarningLog("Tweaking cancelled.");
+                // Exit if user inputs 'q'
+                if (todoId.equalsIgnoreCase("q")) {
+                    OutputHandler.PrintWarningLog("Tweaking cancelled.");
+                    return;
+                }
+
+                // Find the Todo by ID
+                Todo todoToTweak = data.getTodoById(todoId);
+                if (todoToTweak == null) {
+                    OutputHandler.PrintWarningLog("Todo ID not found! Please try again.");
+                    continue;
+                }
+
+                // Ask if user wants to mark it as completed or uncompleted
+                String statusInput = InputHandler.getString("Do you want to mark this Todo as completed? (yes/no): ");
+                boolean status = statusInput.equalsIgnoreCase("yes");
+
+                // Call markTodoById method
+                CResponse markResponse = data.markTodoById(todoId, status);
+
+                // Output the result
+                if (markResponse.status) {
+                    OutputHandler.PrintSuccessLog(markResponse.message);
+                } else {
+                    OutputHandler.PrintWarningLog(markResponse.message);
+                }
+
                 return;
             }
-
-            // Find the Todo by ID
-            Todo todoToTweak = data.getTodoById(todoId);
-            if (todoToTweak == null) {
-                OutputHandler.PrintWarningLog("Todo ID not found! Please try again.");
-                continue;
-            }
-
-            // Ask if user wants to mark it as completed or uncompleted
-            String statusInput = InputHandler.getString("Do you want to mark this Todo as completed? (yes/no): ");
-            boolean status = statusInput.equalsIgnoreCase("yes");
-
-            // Call markTodoById method
-            CResponse markResponse = data.markTodoById(todoId, status);
-
-            // Output the result
-            if (markResponse.status) {
-                OutputHandler.PrintSuccessLog(markResponse.message);
-            } else {
-                OutputHandler.PrintWarningLog(markResponse.message);
-            }
-
-            return;
         }
     }
 
     public void searchTodo() {
-        while (true) {
-            OutputHandler.printBorderMessage("Searching for Todos by date...");
+        System.out.println(data.getSize());
+        if(data.getSize() > 2){
+            while (true) {
+                OutputHandler.printBorderMessage("Searching for Todos by date...");
 
-            // Get date input from user or quit
-            String dateInput = InputHandler.getString("Enter date (dd-MM-yyyy) or 'q' to quit: ");
-            if (dateInput.equalsIgnoreCase("q")) {
-                OutputHandler.PrintWarningLog("Search cancelled.");
-                return;
-            }
+                // Get date input from user or quit
+                String dateInput = InputHandler.getString("Enter date (dd-MM-yyyy) or 'q' to quit: ");
+                if (dateInput.equalsIgnoreCase("q")) {
+                    OutputHandler.PrintWarningLog("Search cancelled.");
+                    return;
+                }
 
-            try {
-                // Parse input date
-                Date searchDate = dateFormat.parse(dateInput);
-                data.showTodoByDate(searchDate);
-            } catch (ParseException e) {
-                // Handle invalid date format
-                OutputHandler.PrintWarningLog("Invalid date format! Please use dd-MM-yyyy.");
-                continue;
-            }
+                try {
+                    // Parse input date
+                    Date searchDate = dateFormat.parse(dateInput);
+                    data.showTodoByDate(searchDate);
+                } catch (ParseException e) {
+                    // Handle invalid date format
+                    OutputHandler.PrintWarningLog("Invalid date format! Please use dd-MM-yyyy.");
+                    continue;
+                }
 
-            // Ask user if they want to continue searching
-            String continueSearch = InputHandler.getString("Do you want to search again? (yes/no): ");
-            if (!continueSearch.equalsIgnoreCase("yes")) {
-                OutputHandler.PrintWarningLog("Exiting search.");
-                break;
+                // Ask user if they want to continue searching
+                String continueSearch = InputHandler.getString("Do you want to search again? (yes/no): ");
+                if (!continueSearch.equalsIgnoreCase("yes")) {
+                    OutputHandler.PrintWarningLog("Exiting search.");
+                    break;
+                }
             }
+        }else{
+            OutputHandler.PrintWarningLog("Add at least 2 Todos to search!");
         }
     }
 }

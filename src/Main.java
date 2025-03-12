@@ -54,7 +54,7 @@ public class Main {
                         break;
                     case 6:
                         mainADT.displayTodos();  // Calls method to display all todos
-                        System.out.println();
+                        System.out.println( );
                         break;
                     case 7:
                         // Exit the program

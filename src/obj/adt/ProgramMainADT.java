@@ -34,6 +34,10 @@ public class ProgramMainADT {
         return new CResponse(true, "Todo added successfully for " + today);
     }
 
+    public int getSize() {
+        return adt.size();
+    }
+
     public void displayTodos() {
         if (adt.isEmpty()) {
             OutputHandler.PrintWarningLog("No Todos available.");
