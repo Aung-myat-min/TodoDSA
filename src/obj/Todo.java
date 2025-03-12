@@ -2,6 +2,7 @@ package obj;
 
 import obj.utils.CResponse;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -37,6 +38,8 @@ public class Todo {
         return new CResponse(true, "Description set successfully!");
     }
 
+
+
     public String getTitle() {
         return this.title;
     }
@@ -53,12 +56,20 @@ public class Todo {
         this.status = status;
     }
 
-    public CResponse setDueDate(String dateStr) {
+    public CResponse setDueDate(String dueDateStr) {
         try {
-            this.dueDate = dateFormat.parse(dateStr);
-            return new CResponse(true, "Due date set successfully!");
-        } catch (Exception e) {
-            return new CResponse(false, "Invalid date format! Use dd-MM-yyyy.");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+            sdf.setLenient(false);
+            Date parsedDate = sdf.parse(dueDateStr);
+
+            if (parsedDate.before(new Date())) {
+                return new CResponse(false, "Due Date cannot be in the past!");
+            }
+
+            this.dueDate = parsedDate;
+            return new CResponse(true, "Due Date set successfully!");
+        } catch (ParseException e) {
+            return new CResponse(false, "Invalid date format! Use DD-MM-YYYY.");
         }
     }
 

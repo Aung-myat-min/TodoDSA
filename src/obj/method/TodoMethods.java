@@ -24,14 +24,14 @@ public class TodoMethods {
         return "T-" + String.format("%03d", (int) (Math.random() * 1000));
     }
 
-    // Add a new Todo
     public void addTodo() {
         while (true) {
             OutputHandler.printBorderMessage("Starting to add a new Todo...");
 
             String title;
             String description;
-            CResponse titleResponse, descriptionResponse;
+            String dueDateStr;
+            CResponse titleResponse, descriptionResponse, dueDateResponse;
             String uniqueId = randomTodoId();
             Todo newTodo = new Todo(uniqueId);
 
@@ -53,6 +53,15 @@ public class TodoMethods {
                 }
             } while (!descriptionResponse.status);
 
+            // Validate due date input (New)
+            do {
+                dueDateStr = InputHandler.getString("Enter Due Date (DD-MM-YYYY): ");
+                dueDateResponse = newTodo.setDueDate(dueDateStr);
+                if (!dueDateResponse.status) {
+                    OutputHandler.PrintWarningLog(dueDateResponse.message);
+                }
+            } while (!dueDateResponse.status);
+
             // Add Todo to ProgramMainADT
             CResponse addResponse = data.addTodo(newTodo);
             if (addResponse.status) {
@@ -70,7 +79,6 @@ public class TodoMethods {
         }
     }
 
-    //update todo
     public void updateTodo() {
         OutputHandler.printBorderMessage("Updating a Todo...");
 

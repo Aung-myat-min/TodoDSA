@@ -39,6 +39,7 @@ public class InputHandler {
         scanner.close();
     }
 
+    // Get Scanner
     public static Scanner getScanner() {
         return scanner;
     }
