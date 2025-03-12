@@ -10,6 +10,8 @@ import obj.utils.OutputHandler;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static java.lang.String.valueOf;
+
 public class ProgramMainADT {
     LinkedHashMap<Date, LinkedList<Todo>> adt;
 
@@ -161,53 +163,13 @@ public class ProgramMainADT {
         }
 
         // Mark the todo as complete
-        todo.setDone(true);
-        CResponse markResponse = new CResponse(status, "");
+        todo.setStatus(status);
+        CResponse markResponse = new CResponse(false, "");
 
         if (markResponse.status) {
-            String statusMessage = status ? "completed!" : "uncompleted!";
-            return new CResponse(true, "Todo with ID " + todoId + " marked as" + statusMessage);
+            return new CResponse(true, "Todo with ID " + todoId + " marked as" + valueOf(status).toLowerCase() + "!");
         } else {
             return markResponse;
-        }
-    }
-
-    public void showTodoByDate(Date d) {
-        // Format the input date to match the date stored in the map (0 hour, 0 min, 0 sec)
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(d);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        Date normalizedDate = calendar.getTime();  // Normalize to 00:00:00
-
-        // Check if the Todos for this date exist
-        if (adt.containsKey(normalizedDate)) {
-            List<Todo> todos = adt.get(normalizedDate);
-
-            // Sort the Todos
-            List<Todo> sortedTodos = TodoSorter.mergeSort(todos);
-
-            // Print header
-            System.out.println("\n=================================================================");
-            System.out.println("| ID       | Completed | Title                        | Description");
-            System.out.println("=================================================================");
-
-            // Print each sorted Todo
-            for (Todo todo : sortedTodos) {
-                String id = todo.getUniqueId();
-                String completed = todo.isDone() ? "Yes" : "No ";
-                String title = todo.getTitle();
-                String description = todo.getDescription();
-
-                // Format output with fixed width
-                System.out.printf("| %-8s | %-9s | %-28s | %s%n", id, completed, title, description);
-            }
-
-            System.out.println("=================================================================\n");
-        } else {
-            System.out.println("No Todos found for the date: " + new SimpleDateFormat("dd-MM-yyyy").format(normalizedDate));
         }
     }
 
