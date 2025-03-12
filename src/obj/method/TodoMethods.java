@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 
 public class TodoMethods {
     private final ProgramMainADT data;
@@ -209,7 +210,7 @@ public class TodoMethods {
 
             // Allow user to search for a Todo
             if (todoId.equalsIgnoreCase("search")) {
-                data.searchTodo();  // Assuming you already have this method
+                searchTodo();  // Assuming you already have this method
                 continue; // Restart loop to ask for ID again
             }
 
@@ -265,38 +266,55 @@ public class TodoMethods {
     }
 
     public void searchTodo() {
-        System.out.println(data.getSize());
-        if (data.getSize() > 2) {
+        if (data.getSize() > 1) {
             while (true) {
-                OutputHandler.printBorderMessage("Searching for Todos by date...");
-
-                // Get date input from user or quit
-                String dateInput = InputHandler.getString("Enter date (dd-MM-yyyy) or 'q' to quit: ");
-                if (dateInput.equalsIgnoreCase("q")) {
+                OutputHandler.printBorderMessage("Search Todo....");
+                System.out.println("Search Options:");
+                System.out.println("1. Search by partial date");
+                System.out.println("2. Search by title");
+                int choice = InputHandler.getInt("Enter your choice (1 or 2) or '-1' to quit:", -1, 2);
+                if (choice == -1) {
                     OutputHandler.PrintWarningLog("Search cancelled.");
                     return;
                 }
-
-                try {
-                    // Parse input date
-                    Date searchDate = dateFormat.parse(dateInput);
-                    data.showTodoByDate(searchDate);
-                } catch (ParseException e) {
-                    // Handle invalid date format
-                    OutputHandler.PrintWarningLog("Invalid date format! Please use dd-MM-yyyy.");
-                    continue;
-                }
-
-                // Ask user if they want to continue searching
-                String continueSearch = InputHandler.getString("Do you want to search again? (yes/no): ");
-                if (!continueSearch.equalsIgnoreCase("yes")) {
-                    OutputHandler.PrintWarningLog("Exiting search.");
-                    break;
+                switch (choice) {
+                    case 1:
+                        searchTodoByPartialDate();
+                        break;
+                    case 2:
+                        searchTodoByTitle();
+                        break;
+                    default:
+                        OutputHandler.PrintWarningLog("Invalid choice! Please enter 1, 2, or '-1' to quit.");
                 }
             }
         } else {
-            OutputHandler.PrintWarningLog("Add at least 2 Todos to search!");
+            OutputHandler.PrintWarningLog("Add at least 1 Todo to search!");
         }
+    }
+
+    public void showTodayTodos() {
+        OutputHandler.printBorderMessage("Showing Todos for Today...");
+
+        // List to hold the matched Todos
+        LinkedList<Todo> todayTodos = data.getTodayTodo();
+
+        // Output the result
+        if (todayTodos.isEmpty()) {
+            OutputHandler.PrintWarningLog("No Todos are due today.");
+        } else {
+            OutputHandler.PrintSuccessLog("Todos due today:");
+            // Loop through all Todos and check if their due date matches today's date
+            for (Todo todo : todayTodos) {
+                todo.display();
+            }
+        }
+    }
+
+    public void showAllTodos() {
+    }
+
+    public void sortTodosByDueDateAndSort() {
     }
 
     private void searchTodoByPartialDate() {
