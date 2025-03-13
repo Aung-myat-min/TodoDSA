@@ -366,7 +366,7 @@ public class TodoMethods {
             } else {
                 OutputHandler.PrintSuccessLog("Todos found with the given partial date:");
                 for (Todo todo : matchedTodos) {
-                    System.out.println(todo);
+                    todo.display();
                 }
             }
 

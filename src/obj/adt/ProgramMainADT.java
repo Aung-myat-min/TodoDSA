@@ -181,12 +181,14 @@ public class ProgramMainADT {
         Calendar inputCal = Calendar.getInstance();
         inputCal.setTime(date);
 
-        for (Date key : adt.keySet()) {
-            Calendar keyCal = Calendar.getInstance();
-            keyCal.setTime(key);
+        for (LinkedList<Todo> todoList : adt.values()) {
+            for (Todo todo : todoList) {
+                Calendar dueCal = Calendar.getInstance();
+                dueCal.setTime(todo.getDueDate()); // Compare with Due Date
 
-            if (keyCal.get(Calendar.YEAR) == inputCal.get(Calendar.YEAR) && keyCal.get(Calendar.MONTH) == inputCal.get(Calendar.MONTH)) {
-                result.addAll(adt.get(key));
+                if (dueCal.get(Calendar.YEAR) == inputCal.get(Calendar.YEAR) && dueCal.get(Calendar.MONTH) == inputCal.get(Calendar.MONTH)) {
+                    result.add(todo);
+                }
             }
         }
         return result;
