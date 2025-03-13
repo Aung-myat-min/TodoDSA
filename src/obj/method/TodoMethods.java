@@ -268,8 +268,7 @@ public class TodoMethods {
     }
 
     public void searchTodo() {
-        System.out.println(data.getSize());
-        if (data.getSize() > 2) {
+        if (data.getSize() > 0) {
             while (true) {
                 OutputHandler.printBorderMessage("Search Todo....");
                 System.out.println("Search Options:");
