@@ -55,9 +55,29 @@ public class TodoMethods {
             } while (!descriptionResponse.status);
 
             // Validate due date input (New)
+            // Validate due date input (Fixed)
             do {
                 dueDateStr = InputHandler.getString("Enter Due Date (DD-MM-YYYY): ");
-                dueDateResponse = newTodo.setDueDate(dueDateStr);
+                try {
+                    // Ensure strict format
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                    dateFormat.setLenient(false); // Strict parsing
+                    Date parsedDate = dateFormat.parse(dueDateStr);
+
+                    // Check for valid year range (e.g., between 1900 and 2100)
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(parsedDate);
+                    int year = cal.get(Calendar.YEAR);
+
+                    if (year < 1900 || year > 2100) {
+                        dueDateResponse = new CResponse(false, "Invalid year! Please enter a year between 1900 and 2100.");
+                    } else {
+                        dueDateResponse = newTodo.setDueDate(dueDateStr);
+                    }
+                } catch (ParseException e) {
+                    dueDateResponse = new CResponse(false, "Invalid date format! Please use DD-MM-YYYY.");
+                }
+
                 if (!dueDateResponse.status) {
                     OutputHandler.PrintWarningLog(dueDateResponse.message);
                 }
@@ -130,16 +150,42 @@ public class TodoMethods {
                 // Due date update (Keep asking until valid or skipped)
                 while (true) {
                     String newDueDate = InputHandler.getString("Enter new Due Date (DD-MM-YYYY) (leave empty to keep current): ");
-                    if (newDueDate.trim().isEmpty()) break;
 
-                    CResponse dueDateResponse = todoToUpdate.setDueDate(newDueDate);
-                    if (dueDateResponse.status) {
-                        OutputHandler.PrintSuccessLog("Due Date updated successfully!");
+                    // Allow skipping the update if input is empty
+                    if (newDueDate.trim().isEmpty()) {
+                        OutputHandler.PrintWarningLog("Keeping current Due Date.");
                         break;
-                    } else {
-                        OutputHandler.PrintWarningLog(dueDateResponse.message);
+                    }
+
+                    try {
+                        // Strictly enforce DD-MM-YYYY format
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                        dateFormat.setLenient(false);
+                        Date parsedDate = dateFormat.parse(newDueDate);
+
+                        // Validate year range
+                        Calendar cal = Calendar.getInstance();
+                        cal.setTime(parsedDate);
+                        int year = cal.get(Calendar.YEAR);
+
+                        if (year < 1900 || year > 2100) {
+                            OutputHandler.PrintWarningLog("Invalid year! Please enter a year between 1900 and 2100.");
+                            continue;
+                        }
+
+                        // Update the due date if valid
+                        CResponse dueDateResponse = todoToUpdate.setDueDate(newDueDate);
+                        if (dueDateResponse.status) {
+                            OutputHandler.PrintSuccessLog("Due Date updated successfully!");
+                            break;
+                        } else {
+                            OutputHandler.PrintWarningLog(dueDateResponse.message);
+                        }
+                    } catch (ParseException e) {
+                        OutputHandler.PrintWarningLog("Invalid date format! Please use DD-MM-YYYY.");
                     }
                 }
+
 
                 OutputHandler.PrintSuccessLog("Todo updated successfully!");
                 return;
