@@ -72,7 +72,7 @@ public class TodoMethods {
             }
 
             // Ask if user wants to add another Todo
-            String continueAdding = InputHandler.getString("Do you want to add another Todo? (yes/no): ");
+            String continueAdding = InputHandler.getString("Do you want to add another Todo? (yes): ");
             if (!continueAdding.equalsIgnoreCase("yes")) {
                 OutputHandler.PrintWarningLog("Stopping Todo addition.");
                 break;
@@ -196,75 +196,79 @@ public class TodoMethods {
     public void updateTodoStatus() {
         OutputHandler.printBorderMessage("Updating Todo Status...");
 
-        while (true) {
-            // Ask for the Todo ID or allow search
-            String todoId = InputHandler.getString("Enter Todo ID to update status (or type 'search' to find one, 'q' to quit): ");
+        if (data.getSize() > 0) {
+            while (true) {
+                // Ask for the Todo ID or allow search
+                String todoId = InputHandler.getString("Enter Todo ID to update status (or type 'search' to find one, 'q' to quit): ");
 
-            // Handle user exit
-            if (todoId.equalsIgnoreCase("q")) {
-                OutputHandler.PrintWarningLog("Update cancelled.");
-                return;
-            }
-
-            // Allow user to search for a Todo
-            if (todoId.equalsIgnoreCase("search")) {
-                searchTodo();  // Assuming you already have this method
-                continue; // Restart loop to ask for ID again
-            }
-
-            // Find the Todo by ID
-            Todo todoToUpdate = data.getTodoById(todoId);
-            if (todoToUpdate == null) {
-                OutputHandler.PrintWarningLog("Todo ID not found! Please try again.");
-                continue;
-            }
-
-            // Show current status
-            System.out.println("Current Status: " + todoToUpdate.getStatus());
-
-            // Display status options
-            System.out.println("Select the new status:");
-            for (TodoStatus status : TodoStatus.values()) {
-                System.out.println(status.ordinal() + 1 + ". " + status);
-            }
-
-            TodoStatus newStatus = null;
-            while (newStatus == null) {
-                try {
-                    int option = Integer.parseInt(InputHandler.getString("Enter your choice (1-3): "));
-                    if (option >= 1 && option <= TodoStatus.values().length) {
-                        newStatus = TodoStatus.values()[option - 1];
-                    } else {
-                        OutputHandler.PrintWarningLog("Invalid option! Please enter a number between 1 and " + TodoStatus.values().length + ".");
-                    }
-                } catch (NumberFormatException e) {
-                    OutputHandler.PrintWarningLog("Invalid input! Please enter a valid number.");
+                // Handle user exit
+                if (todoId.equalsIgnoreCase("q")) {
+                    OutputHandler.PrintWarningLog("Update cancelled.");
+                    return;
                 }
+
+                // Allow user to search for a Todo
+                if (todoId.equalsIgnoreCase("search")) {
+                    data.displayTodos();  // Assuming you already have this method
+                    continue; // Restart loop to ask for ID again
+                }
+
+                // Find the Todo by ID
+                Todo todoToUpdate = data.getTodoById(todoId);
+                if (todoToUpdate == null) {
+                    OutputHandler.PrintWarningLog("Todo ID not found! Please try again.");
+                    continue;
+                }
+
+                // Show current status
+                System.out.println("Current Status: " + todoToUpdate.getStatus());
+
+                // Display status options
+                System.out.println("Select the new status:");
+                for (TodoStatus status : TodoStatus.values()) {
+                    System.out.println(status.ordinal() + 1 + ". " + status);
+                }
+
+                TodoStatus newStatus = null;
+                while (newStatus == null) {
+                    try {
+                        int option = Integer.parseInt(InputHandler.getString("Enter your choice (1-3): "));
+                        if (option >= 1 && option <= TodoStatus.values().length) {
+                            newStatus = TodoStatus.values()[option - 1];
+                        } else {
+                            OutputHandler.PrintWarningLog("Invalid option! Please enter a number between 1 and " + TodoStatus.values().length + ".");
+                        }
+                    } catch (NumberFormatException e) {
+                        OutputHandler.PrintWarningLog("Invalid input! Please enter a valid number.");
+                    }
+                }
+
+                // Confirm before updating
+                String confirm = InputHandler.getString("Are you sure you want to change status to " + newStatus + "? (yes): ");
+                if (!confirm.equalsIgnoreCase("yes")) {
+                    OutputHandler.PrintWarningLog("Status update cancelled.");
+                    return;
+                }
+
+                // Call method to update status
+                CResponse updateResponse = data.markTodoById(todoId, newStatus);
+
+                // Output the result
+                if (updateResponse.status) {
+                    OutputHandler.PrintSuccessLog(updateResponse.message);
+                } else {
+                    OutputHandler.PrintWarningLog(updateResponse.message);
+                }
+
+                return; // Exit function after successfully updating the status
             }
-
-            // Confirm before updating
-            String confirm = InputHandler.getString("Are you sure you want to change status to " + newStatus + "? (yes/no): ");
-            if (!confirm.equalsIgnoreCase("yes")) {
-                OutputHandler.PrintWarningLog("Status update cancelled.");
-                return;
-            }
-
-            // Call method to update status
-            CResponse updateResponse = data.markTodoById(todoId, newStatus);
-
-            // Output the result
-            if (updateResponse.status) {
-                OutputHandler.PrintSuccessLog(updateResponse.message);
-            } else {
-                OutputHandler.PrintWarningLog(updateResponse.message);
-            }
-
-            return; // Exit function after successfully updating the status
+        } else {
+            OutputHandler.PrintWarningLog("Add at least 1 Todo to update status!");
         }
     }
 
     public void searchTodo() {
-        if (data.getSize() > 1) {
+        if (data.getSize() > 0) {
             while (true) {
                 OutputHandler.printBorderMessage("Search Todo....");
                 System.out.println("Search Options:");
@@ -325,12 +329,14 @@ public class TodoMethods {
         } else {
             OutputHandler.PrintSuccessLog("Todos sorted by Due Date and Status:");
             for (Map.Entry<Date, LinkedList<Todo>> entry : sortedTodos.entrySet()) {
+                System.out.println("\n========== Due Date: " + entry.getKey() + " ==========");
                 for (Todo todo : entry.getValue()) {
                     todo.display();
                 }
             }
         }
     }
+
 
     private void searchTodoByPartialDate() {
         OutputHandler.printBorderMessage("Searching for Todos by partial date...");
@@ -343,8 +349,10 @@ public class TodoMethods {
             }
 
             Date searchDate;
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy");
+            dateFormat.setLenient(false);
             try {
-                searchDate = new SimpleDateFormat("MM-yyyy").parse(partialDate);
+                searchDate = dateFormat.parse(partialDate);
             } catch (ParseException e) {
                 OutputHandler.PrintWarningLog("Invalid date format! Please use MM-yyyy.");
                 continue;
@@ -387,7 +395,7 @@ public class TodoMethods {
             } else {
                 OutputHandler.PrintSuccessLog("Todos found with the given title:");
                 for (Todo todo : matchedTodos) {
-                    System.out.println(todo);
+                    todo.display();
                 }
             }
 

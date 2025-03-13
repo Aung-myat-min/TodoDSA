@@ -1,30 +1,14 @@
 package obj.sorting;
 
 import obj.Todo;
-import obj.TodoStatus;
 
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 public class TodoSorter {
 
-    // Sort Todos by due date and status using merge sort
-    public static LinkedHashMap<Date, LinkedList<Todo>> sortTodosByDueDateAndStatus(LinkedHashMap<Date, LinkedList<Todo>> todosMap) {
-        // Create a new LinkedHashMap to maintain the order of insertion
-        LinkedHashMap<Date, LinkedList<Todo>> sortedMap = new LinkedHashMap<>();
-
-        // Sort each list by status within the same due date using merge sort
-        for (Map.Entry<Date, LinkedList<Todo>> entry : todosMap.entrySet()) {
-            List<Todo> sortedList = mergeSort(entry.getValue(), Comparator.comparing(Todo::getStatus, new TodoStatusComparator()).thenComparing(Todo::getTitle));
-            sortedMap.put(entry.getKey(), new LinkedList<>(sortedList));
-        }
-
-        return sortedMap;
+    // Sort Todos by Due Date (newest to oldest) using Merge Sort
+    public static List<Todo> sortTodosByDueDate(List<Todo> todos) {
+        return mergeSort(todos, Comparator.comparing(Todo::getDueDate, Comparator.reverseOrder()));
     }
 
     // Merge sort implementation
@@ -62,26 +46,5 @@ public class TodoSorter {
         }
 
         return merged;
-    }
-
-    // Custom comparator for TodoStatus
-    private static class TodoStatusComparator implements Comparator<TodoStatus> {
-        @Override
-        public int compare(TodoStatus status1, TodoStatus status2) {
-            return Integer.compare(getStatusOrder(status1), getStatusOrder(status2));
-        }
-
-        private int getStatusOrder(TodoStatus status) {
-            switch (status) {
-                case Doing:
-                    return 1;
-                case Pending:
-                    return 2;
-                case Done:
-                    return 3;
-                default:
-                    throw new IllegalArgumentException("Unknown status: " + status);
-            }
-        }
     }
 }

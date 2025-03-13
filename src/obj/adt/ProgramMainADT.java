@@ -44,7 +44,7 @@ public class ProgramMainADT {
     public void displayTodos() {
         if (adt.isEmpty()) {
             OutputHandler.PrintWarningLog("No Todos available.");
-            System.exit(0); // Stop the program
+            return;
         }
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -63,29 +63,32 @@ public class ProgramMainADT {
                 if (iterator.hasNext()) {
                     Todo todo2 = iterator.next();
                     todo2.display();
+                } else {
+                    break;
                 }
 
                 // Ask user to continue or quit
-                System.out.println("Press enter to continue or [q] to quit.");
+                System.out.println("Press enter to continue or [q] to stop displaying Todos.");
                 String userInput = InputHandler.getString(": ");
 
                 // Handle user input
                 if (userInput.trim().equalsIgnoreCase("q")) {
                     OutputHandler.PrintWarningLog("Exiting the todo display.");
-                    System.exit(0); // Stop the program
+                    return;
                 }
             }
         }
     }
 
     public void showAllTodos() {
+        System.out.println();
         if (adt.isEmpty()) {
             OutputHandler.PrintWarningLog("No Todos available.");
-            System.exit(0); // Stop the program
+            return;
         }
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        System.out.println("Displaying all Todos:");
+        OutputHandler.printBorderMessage("Displaying all Todos:");
 
         for (Map.Entry<Date, LinkedList<Todo>> entry : adt.entrySet()) {
             System.out.println("Date: " + dateFormat.format(entry.getKey()));
@@ -164,7 +167,7 @@ public class ProgramMainADT {
 
         // Mark the todo as complete
         todo.setStatus(status);
-        CResponse markResponse = new CResponse(false, "");
+        CResponse markResponse = new CResponse(true, "");
 
         if (markResponse.status) {
             return new CResponse(true, "Todo with ID " + todoId + " marked as" + valueOf(status).toLowerCase() + "!");
@@ -182,8 +185,7 @@ public class ProgramMainADT {
             Calendar keyCal = Calendar.getInstance();
             keyCal.setTime(key);
 
-            if (keyCal.get(Calendar.YEAR) == inputCal.get(Calendar.YEAR) &&
-                    keyCal.get(Calendar.MONTH) == inputCal.get(Calendar.MONTH)) {
+            if (keyCal.get(Calendar.YEAR) == inputCal.get(Calendar.YEAR) && keyCal.get(Calendar.MONTH) == inputCal.get(Calendar.MONTH)) {
                 result.addAll(adt.get(key));
             }
         }
@@ -222,6 +224,22 @@ public class ProgramMainADT {
     }
 
     public LinkedHashMap<Date, LinkedList<Todo>> sortTodosByDueDateAndStatus() {
-        return TodoSorter.sortTodosByDueDateAndStatus(adt);
+        // Get all Todos from the ADT and flatten into a single list
+        List<Todo> allTodos = new ArrayList<>();
+        for (LinkedList<Todo> todoList : adt.values()) {
+            allTodos.addAll(todoList);
+        }
+
+        // Sort Todos by Due Date (newest to oldest)
+        List<Todo> sortedTodos = TodoSorter.sortTodosByDueDate(allTodos);
+
+        // Reconstruct the sorted LinkedHashMap
+        LinkedHashMap<Date, LinkedList<Todo>> sortedMap = new LinkedHashMap<>();
+        for (Todo todo : sortedTodos) {
+            sortedMap.computeIfAbsent(todo.getDueDate(), k -> new LinkedList<>()).add(todo);
+        }
+
+        return sortedMap;
     }
+
 }
