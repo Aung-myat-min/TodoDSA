@@ -60,7 +60,7 @@ public class Todo {
             sdf.setLenient(false);
             Date parsedDate = sdf.parse(dueDateStr);
 
-            if (parsedDate.before(new Date())) {
+            if (parsedDate.before(new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000))) {
                 return new CResponse(false, "Due Date cannot be in the past!");
             }
 
@@ -77,7 +77,12 @@ public class Todo {
 
     public boolean isOverdue() {
         if (dueDate == null) return false;
-        return new Date().after(dueDate);
+        return new Date().after(dueDate) && !isToday(dueDate);
+    }
+
+    private boolean isToday(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        return sdf.format(date).equals(sdf.format(new Date()));
     }
 
     public void display() {
