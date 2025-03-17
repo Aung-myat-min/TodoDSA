@@ -56,7 +56,7 @@ public class Main {
                         todoMethods.showAllTodos();
                         break;
                     case 8:
-                        todoMethods.sortTodosByDueDateAndSort();
+                        todoMethods.sortTodosByDueDateAndStatus();
                         break;
                     case 9:
                         // Exit the program

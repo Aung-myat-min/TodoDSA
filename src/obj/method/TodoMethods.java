@@ -363,7 +363,7 @@ public class TodoMethods {
         data.showAllTodos();
     }
 
-    public void sortTodosByDueDateAndSort() {
+    public void sortTodosByDueDateAndStatus() {
         OutputHandler.printBorderMessage("Sorting Todos by Due Date and Status...");
 
         // Get the sorted map from ProgramMainADT
