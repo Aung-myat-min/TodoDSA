@@ -318,7 +318,7 @@ public class TodoMethods {
                 System.out.println("Search Options:");
                 System.out.println("1. Search by partial date");
                 System.out.println("2. Search by title");
-                int choice = InputHandler.getInt("Enter your choice (1 or 2) or '-1' to quit:", -1, 2);
+                int choice = InputHandler.getInt("Enter your choice (1 or 2) or '-1' to quit: ", -1, 2);
                 if (choice == -1) {
                     OutputHandler.PrintWarningLog("Search cancelled.");
                     return;
@@ -361,8 +361,8 @@ public class TodoMethods {
         data.showAllTodos();
     }
 
-    public void sortTodosByDueDateAndStatus() {
-        OutputHandler.printBorderMessage("Sorting Todos by Due Date and Status...");
+    public void sortTodosByDueDate() {
+        OutputHandler.printBorderMessage("Sorting Todos by Due Date...");
 
         // Get the sorted map from ProgramMainADT
         LinkedHashMap<Date, LinkedList<Todo>> sortedTodos = data.sortTodosByDueDate();
@@ -371,7 +371,7 @@ public class TodoMethods {
         if (sortedTodos.isEmpty()) {
             OutputHandler.PrintWarningLog("No Todos available to sort.");
         } else {
-            OutputHandler.PrintSuccessLog("Todos sorted by Due Date and Status:");
+            OutputHandler.PrintSuccessLog("Todos sorted by Due Date:");
             for (Map.Entry<Date, LinkedList<Todo>> entry : sortedTodos.entrySet()) {
                 System.out.println("\n========== Due Date: " + entry.getKey() + " ==========");
                 for (Todo todo : entry.getValue()) {

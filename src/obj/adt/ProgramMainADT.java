@@ -170,7 +170,7 @@ public class ProgramMainADT {
         CResponse markResponse = new CResponse(true, "");
 
         if (markResponse.status) {
-            return new CResponse(true, "Todo with ID " + todoId + " marked as" + valueOf(status).toLowerCase() + "!");
+            return new CResponse(true, "Todo with ID " + todoId + " marked as " + valueOf(status).toLowerCase() + "!");
         } else {
             return markResponse;
         }
