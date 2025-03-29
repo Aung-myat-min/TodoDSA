@@ -217,7 +217,7 @@ public class ProgramMainADT {
         calendar.set(Calendar.MILLISECOND, 0);
         Date today = calendar.getTime();  // Get the date with 0 hour, 0 min, 0 sec
 
-        LinkedHashMap<Date, LinkedList<Todo>> sortedTodos = sortTodosByDueDateAndStatus();
+        LinkedHashMap<Date, LinkedList<Todo>> sortedTodos = sortTodosByDueDate();
 
         // Return the list of todos for today if it exists
         if (sortedTodos.containsKey(today)) {
@@ -227,7 +227,7 @@ public class ProgramMainADT {
         }
     }
 
-    public LinkedHashMap<Date, LinkedList<Todo>> sortTodosByDueDateAndStatus() {
+    public LinkedHashMap<Date, LinkedList<Todo>> sortTodosByDueDate() {
         // Get all Todos from the ADT and flatten into a single list
         List<Todo> allTodos = new ArrayList<>();
         for (LinkedList<Todo> todoList : adt.values()) {

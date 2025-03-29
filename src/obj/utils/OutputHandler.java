@@ -31,6 +31,7 @@ public class OutputHandler {
         System.out.println(border);
     }
 
+    // Helper method to print error log in RED
     public static void PrintErrorLog(String message) {
         System.out.println();
         System.out.println(RED + "[ERROR] " + message + RESET);

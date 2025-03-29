@@ -13,11 +13,9 @@ import java.util.*;
 
 public class TodoMethods {
     private final ProgramMainADT data;
-    private final SimpleDateFormat dateFormat;
 
     public TodoMethods(ProgramMainADT data) {
         this.data = data;
-        dateFormat = new SimpleDateFormat("dd-MM-yyyy");
     }
 
     // Generate a random unique ID
@@ -367,7 +365,7 @@ public class TodoMethods {
         OutputHandler.printBorderMessage("Sorting Todos by Due Date and Status...");
 
         // Get the sorted map from ProgramMainADT
-        LinkedHashMap<Date, LinkedList<Todo>> sortedTodos = data.sortTodosByDueDateAndStatus();
+        LinkedHashMap<Date, LinkedList<Todo>> sortedTodos = data.sortTodosByDueDate();
 
         // Output the result
         if (sortedTodos.isEmpty()) {
@@ -382,7 +380,6 @@ public class TodoMethods {
             }
         }
     }
-
 
     private void searchTodoByPartialDate() {
         OutputHandler.printBorderMessage("Searching for Todos by partial date...");

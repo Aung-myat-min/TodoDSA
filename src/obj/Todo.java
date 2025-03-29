@@ -8,7 +8,6 @@ import java.util.Date;
 
 public class Todo {
     private final String uniqueId;
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
     private String title;
     private String description;
     private TodoStatus status = TodoStatus.Pending;
@@ -20,6 +19,26 @@ public class Todo {
 
     public String getUniqueId() {
         return uniqueId;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public Date getDueDate() {
+        return dueDate;
+    }
+
+    public TodoStatus getStatus() {
+        return this.status;
+    }
+
+    public void setStatus(TodoStatus status) {
+        this.status = status;
     }
 
     public CResponse setTitle(String title) {
@@ -38,22 +57,6 @@ public class Todo {
         return new CResponse(true, "Description set successfully!");
     }
 
-    public String getTitle() {
-        return this.title;
-    }
-
-    public String getDescription() {
-        return this.description;
-    }
-
-    public TodoStatus getStatus() {
-        return this.status;
-    }
-
-    public void setStatus(TodoStatus status) {
-        this.status = status;
-    }
-
     public CResponse setDueDate(String dueDateStr) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
@@ -69,10 +72,6 @@ public class Todo {
         } catch (ParseException e) {
             return new CResponse(false, "Invalid date format! Use DD-MM-YYYY.");
         }
-    }
-
-    public Date getDueDate() {
-        return dueDate;
     }
 
     public boolean isOverdue() {
